@@ -5,7 +5,7 @@ This utility can generate and validate key pairs, generate SAML assertions accep
 Features:
 
 - [Generate a new key pair](#generate-a-new-key-pair)
-- [Check certificate validtity](#check-the-oauth-client-certificates-validity)
+- [Check certificate validity](#check-the-oauth-client-certificates-validity)
 - [Generate assertion (and validate)](#generate-via-cli)
 - [Run a local web service to generate an assertion and provide access tokens](#run-a-web-service-returning-oauth-access-tokens)
 - [Integrate with a Postman OAuth flow to obtain an access token](#usage-with-postman)
