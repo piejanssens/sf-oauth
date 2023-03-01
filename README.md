@@ -87,7 +87,7 @@ For each SF instance, create a separate Postman environment specifying the follo
 
 In any collection or folder, set up 'Authorization' to `OAuth 2.0` and configure the like shown as follows:
 
-![Postman config](docs/postman_config.png =600x)
+![Postman config](./docs/postman_config.png)
 
 > **Remember** to select the correct Postman environment prior to requesting a new OAuth access token. As long as the token remains valid you can select different tokens that are held by Postman without the need to generate/request a new one.
 
