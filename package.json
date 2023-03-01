@@ -30,7 +30,7 @@
     "url": "https://github.com/piejanssens/sf-oauth.git"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "devDependencies": {
     "semantic-release": "^20.1.1"
