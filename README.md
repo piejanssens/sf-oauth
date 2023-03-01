@@ -1,4 +1,4 @@
-# OAuth 2.0 SAML Assertion Access Token Generator for SuccessFactors
+# OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HXM Suite
 
 This utility can generate and validate key pairs, generate SAML assertions accepted by SuccessFactors `/oauth/token` endpoint and integrate with Postman (which lacks support for the OAuth 2.0 SAML bearer assertion flow).
 
