@@ -1,0 +1,27 @@
+{
+  "name": "sf-oauth",
+  "version": "1.0.0",
+  "description": "Utility to generate SuccessFactors OAuth SAML assertions with the option to integrate with Postman",
+  "main": "./src/serve.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": "./src/cli.js",
+  "scripts": {
+    "start": "node ./src/serve.js"
+  },
+  "keywords": [
+    "SuccessFactors",
+    "SAP",
+    "OAuth",
+    "Postman"
+  ],
+  "author": "Pieter Janssens",
+  "license": "GNU GPLv3",
+  "dependencies": {
+    "arg": "^5.0.2",
+    "cli-color": "^2.0.3",
+    "express": "^4.18.2",
+    "saml": "^3.0.1"
+  }
+}
