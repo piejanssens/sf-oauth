@@ -122,7 +122,7 @@ if (args['--generate']) {
 
   if (fs.existsSync(publicFile) || fs.existsSync(privateFile)) {
     log.error(
-      `File ${publicFile} and/or ${privateFile} arleady exists in ${cdw()}`
+      `File ${publicFile} and/or ${privateFile} arleady exists in ${cwd()}`
     )
   }
 
