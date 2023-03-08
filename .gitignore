@@ -4,3 +4,4 @@ node_modules/
 *.key
 *.der
 **/.DS_Store
+.vscode/settings.json
