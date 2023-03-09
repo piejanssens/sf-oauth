@@ -41,10 +41,18 @@ try {
     '-d': '--dir',
   })
 } catch (err) {
-  if (err.code === 'ARG_UNKNOWN_OPTION') {
-    log.error(err.message)
-  } else {
-    throw err
+  switch (err.code) {
+    case 'ARG_UNKNOWN_OPTION':
+      log.error(err.message)
+      break
+    case 'ARG_MISSING_REQUIRED_LONGARG':
+      log.error(
+        'One or more arguments is used incorrectly, are you forgetting to provide value perhaps?'
+      )
+      break
+    default:
+      throw err
+      break
   }
 }
 
@@ -52,13 +60,13 @@ if (args['--dir']) {
   process.chdir(args['--dir'])
 }
 
-if (!args['--raw']) {
-  log.info(`ℹ️  PEM files directory is set to ${cwd()}`)
+if (args['--help']) {
+  log.notice('Please visit https://npmjs.com/sf-oauth')
+  exit(0)
 }
 
-if (args['--help']) {
-  log.info('See README.md')
-  exit(0)
+if (!args['--raw']) {
+  log.info(`ℹ️  PEM files directory is set to ${cwd()}`)
 }
 
 if (args['--generate']) {
