@@ -1,0 +1,13 @@
+diff --git a/node_modules/saml/lib/saml20.js b/node_modules/saml/lib/saml20.js
+index 9db8141..5ba6ec3 100644
+--- a/node_modules/saml/lib/saml20.js
++++ b/node_modules/saml/lib/saml20.js
+@@ -168,7 +168,7 @@ function createAssertion(options, strategies, callback) {
+   var confirmationData = doc.documentElement.getElementsByTagName('saml:SubjectConfirmationData');
+ 
+   if (options.lifetimeInSeconds) {
+-    conditions[0].setAttribute('NotBefore', now.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'));
++    conditions[0].setAttribute('NotBefore', now.clone().subtract(1, "days").format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'));
+     conditions[0].setAttribute('NotOnOrAfter', now.clone().add(options.lifetimeInSeconds, 'seconds').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'));
+ 
+     confirmationData[0].setAttribute('NotOnOrAfter', now.clone().add(options.lifetimeInSeconds, 'seconds').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'));

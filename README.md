@@ -63,8 +63,6 @@ $ sf-oauth [--port]
 🚀 SAML Assertion OAuth access token generator listening on port 3000
 ```
 
-You can call th
-
 | method | path         | purpose                                                                                                                                       | body/query parameters                    |
 | ------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
 | GET    | `/authorize` | requests to supply `userId` via your browser, generates SAML assertion, requests OAuth access token from SF and then returns the access token | `client_id`, `scope`, `state`            |
