@@ -27,6 +27,7 @@ try {
     '--port': Number,
     '--raw': Boolean,
     '--dir': String,
+    '--learningOnly': Boolean,
     // Aliases
     '-g': '--generate',
     '-n': '--newkeypair',
@@ -39,6 +40,7 @@ try {
     '-p': '--port',
     '-r': '--raw',
     '-d': '--dir',
+    '-l': '--learningOnly'
   })
 } catch (err) {
   switch (err.code) {
@@ -100,6 +102,7 @@ if (args['--generate']) {
     userId,
     hostname,
     companyId,
+    !!args['--learningOnly'],
     args['--ttl'],
     args['--raw']
   )

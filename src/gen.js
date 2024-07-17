@@ -8,6 +8,7 @@ function generate(
   sUser,
   sHostname,
   companyId,
+  learningOnly,
   iTtl = 600,
   silent = false
 ) {
@@ -53,8 +54,9 @@ function generate(
     attributes: {
       api_key: sClientId,
       use_username: 'false',
+      external_user: learningOnly ? 'true' : 'false'
     },
-    nameIdentifier: sUser,
+    nameIdentifier: learningOnly ? `${sUser}#DIV#${companyId}` : sUser,
     sessionIndex: crypto.randomUUID(),
     recipient: `https://${sHostname}/oauth/token`,
   }

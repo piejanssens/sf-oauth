@@ -4,11 +4,20 @@ This utility can generate and validate key pairs, generate SAML assertions accep
 
 Features:
 
-- [Generate a new key pair](#generate-a-new-key-pair)
-- [Check certificate validity](#check-the-oauth-client-certificates-validity)
-- [Generate assertion (and validate)](#generate-via-cli)
-- [Run a local web service to generate an assertion and provide access tokens](#run-a-web-service-returning-oauth-access-tokens)
-- [Integrate with a Postman OAuth flow to obtain an access token](#usage-with-postman)
+- [OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HXM Suite](#oauth-20-saml-assertion-access-token-generator-for-sap-successfactors-hxm-suite)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Generate a new key pair](#generate-a-new-key-pair)
+    - [Create or update the OAuth client in SuccessFactors](#create-or-update-the-oauth-client-in-successfactors)
+    - [Run a web service returning OAuth access tokens](#run-a-web-service-returning-oauth-access-tokens)
+    - [Usage with Postman](#usage-with-postman)
+    - [Generate via CLI](#generate-via-cli)
+      - [Argument Aliases](#argument-aliases)
+    - [Check the OAuth client certificate's validity](#check-the-oauth-client-certificates-validity)
+    - [Learning Only Users](#learning-only-users)
+  - [Contributing](#contributing)
+  - [Sponsorship](#sponsorship)
 
 ## Prerequisites
 
@@ -127,19 +136,20 @@ Token is valid  🎉
 
 #### Argument Aliases
 
-| alias | argument     |
-| ----- | ------------ |
-| -g    | --generate   |
-| -n    | --newkeypair |
-| -c    | --clientId   |
-| -u    | --userId     |
-| -i    | --companyId  |
-| -h    | --hostname   |
-| -v    | --validate   |
-| -t    | --ttl        |
-| -p    | --port       |
-| -r    | --raw        |
-| -d    | --dir        |
+| alias | argument       |
+| ----- | -------------- |
+| -g    | --generate     |
+| -n    | --newkeypair   |
+| -c    | --clientId     |
+| -u    | --userId       |
+| -i    | --companyId    |
+| -h    | --hostname     |
+| -v    | --validate     |
+| -t    | --ttl          |
+| -p    | --port         |
+| -r    | --raw          |
+| -d    | --dir          |
+| -l    | --learningOnly |
 
 ### Check the OAuth client certificate's validity
 
@@ -147,6 +157,10 @@ Token is valid  🎉
 $ sf-oauth --validate [--companyId]
 notAfter=Mar  6 13:37:03 2032 GMT
 ```
+
+### Learning Only Users
+
+The SuccessFactors Learning OAuth token server is deprecated. Instead, you can use the SuccessFactors Platform token server to generate OAuth tokens even if the user does not exist in Employee Profile or Employee Central, a so-called learning-only user. For this use-case, use the `-l` or `--learningOnly` argument.
 
 ## Contributing
 
