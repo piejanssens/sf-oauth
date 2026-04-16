@@ -129,7 +129,7 @@ const serve = (port = 3000) => {
         userId,
         hostname,
         companyId,
-        redirectUrl
+        redirectUrl,
       )
     }
   })
@@ -140,7 +140,7 @@ const serve = (port = 3000) => {
 
   app.listen(port, () => {
     log.info(
-      `🚀 SAML Assertion OAuth access token generator listening on port ${port}`
+      `🚀 SAML Assertion OAuth access token generator listening on port ${port}`,
     )
   })
 }
@@ -152,7 +152,7 @@ async function generateToken(
   userId,
   hostname,
   companyId,
-  redirectUrl
+  redirectUrl,
 ) {
   let signedAssertionB64 = generate(clientId, userId, hostname, companyId)
   let params = new URLSearchParams()
@@ -176,7 +176,7 @@ async function generateToken(
       const oToken = await response.json()
       if (redirectUrl) {
         res.redirect(
-          `${redirectUrl}?access_token=${oToken.access_token}&token_type=${oToken.token_type}&expires_in=${oToken.expires_in}`
+          `${redirectUrl}?access_token=${oToken.access_token}&token_type=${oToken.token_type}&expires_in=${oToken.expires_in}`,
         )
       } else {
         res.send(oToken)

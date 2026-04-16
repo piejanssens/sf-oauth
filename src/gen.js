@@ -10,7 +10,7 @@ function generate(
   companyId,
   learningOnly,
   iTtl = 600,
-  silent = false
+  silent = false,
 ) {
   const publicFile = fs.existsSync(`${companyId}-public.pem`)
     ? `${companyId}-public.pem`
@@ -54,7 +54,7 @@ function generate(
     attributes: {
       api_key: sClientId,
       use_username: 'false',
-      external_user: learningOnly ? 'true' : 'false'
+      external_user: learningOnly ? 'true' : 'false',
     },
     nameIdentifier: learningOnly ? `${sUser}#DIV#${companyId}` : sUser,
     sessionIndex: crypto.randomUUID(),
@@ -76,13 +76,22 @@ function validate(clientId, companyId, assertion, hostname) {
   log.info(`Requesting a SAML Bearer token - POST ${sTokenUrl}`)
   fetch(sTokenUrl, { method: 'POST', body: params })
     .then(async (response) => {
-      const oToken = await response.json()
+      const oData = await response.json()
+      if (response.status != 200) {
+        if (response.headers.get('Content-Type') == 'application/json') {
+          log.error(JSON.stringify(oData))
+        } else {
+          log.error(`${response.status} - ${response.statusText}`)
+          log.error(oData)
+        }
+        return
+      }
       log.success('Bearer token received 🎉')
-      log.notice(JSON.stringify(oToken))
+      log.notice(JSON.stringify(oData))
       log.info(`Validating the token - GET ${sValidationUrl}`)
       return fetch(sValidationUrl, {
         headers: {
-          Authorization: `Bearer ${oToken.access_token}`,
+          Authorization: `Bearer ${oData.access_token}`,
         },
       })
     })
