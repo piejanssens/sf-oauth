@@ -76,22 +76,16 @@ function validate(clientId, companyId, assertion, hostname) {
   log.info(`Requesting a SAML Bearer token - POST ${sTokenUrl}`)
   fetch(sTokenUrl, { method: 'POST', body: params })
     .then(async (response) => {
-      const oData = await response.json()
       if (response.status != 200) {
-        if (response.headers.get('Content-Type') == 'application/json') {
-          log.error(JSON.stringify(oData))
-        } else {
-          log.error(`${response.status} - ${response.statusText}`)
-          log.error(oData)
-        }
-        return
+        log.error(await response.text())
       }
+      const oResponse = await response.json()
       log.success('Bearer token received 🎉')
-      log.notice(JSON.stringify(oData))
+      log.notice(JSON.stringify(oResponse))
       log.info(`Validating the token - GET ${sValidationUrl}`)
       return fetch(sValidationUrl, {
         headers: {
-          Authorization: `Bearer ${oData.access_token}`,
+          Authorization: `Bearer ${oResponse.access_token}`,
         },
       })
     })
