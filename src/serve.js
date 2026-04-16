@@ -7,6 +7,7 @@ const serve = (port = 3000) => {
   const app = express()
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
+
   app.post('/authorize', async (req, res) => {
     const userId = req.body?.user_id
     const clientId = req.body?.client_id
@@ -154,6 +155,25 @@ async function generateToken(
   companyId,
   redirectUrl,
 ) {
+  if (!clientId || !userId || !hostname || !companyId) {
+    res.status(400).send('Missing required parameters')
+    return
+  }
+
+  if (
+    clientId.startsWith('{{') ||
+    userId.startsWith('{{') ||
+    hostname.startsWith('{{') ||
+    companyId.startsWith('{{')
+  ) {
+    res
+      .status(400)
+      .send(
+        'Some required parameter is not set. Make sure Postman variables have a value set.',
+      )
+    return
+  }
+
   let signedAssertionB64 = generate(clientId, userId, hostname, companyId)
   let params = new URLSearchParams()
   params.append('client_id', clientId)
