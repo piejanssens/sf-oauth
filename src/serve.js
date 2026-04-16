@@ -136,12 +136,12 @@ const serve = (port = 3000) => {
   })
 
   app.get('/', async (req, res) => {
-    res.status(400).send('Time to take a look at README.md 😉')
+    res.redirect('https://npmjs.com/sf-oauth')
   })
 
   app.listen(port, () => {
     log.info(
-      `🚀 SAML Assertion OAuth access token generator listening on port ${port}`,
+      `🚀 SAML Assertion OAuth access token generator listening on http://localhost:${port}`,
     )
   })
 }
