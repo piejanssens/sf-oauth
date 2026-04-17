@@ -8,7 +8,6 @@ const fs = require('fs')
 const { generate, validate } = require('./gen')
 
 const log = require('./logger')
-const { sign } = require('crypto')
 
 let args
 
@@ -71,7 +70,7 @@ if (!args['--raw']) {
   log.info(`ℹ️  PEM files directory is set to ${cwd()}`)
 }
 
-if (args['--generate']) {
+function runGenerate() {
   if (!args['--hostname']) {
     log.error(
       'SF API hostname is a required argument, provide `--hostname XXX`',
@@ -117,7 +116,9 @@ if (args['--generate']) {
   if (args['--validate']) {
     validate(clientId, companyId, signedAssertionB64, hostname)
   }
-} else if (args['--newkeypair']) {
+}
+
+function runNewKeypair() {
   if (!args['--companyId']) {
     log.info(
       'ℹ️  You can pass argument --companyId for convenience store the key pair as <companyId>-private.pem and <companyId>-public.pem',
@@ -158,7 +159,9 @@ if (args['--generate']) {
     ],
     { stdio: 'inherit' },
   )
-} else if (args['--validate']) {
+}
+
+function runValidate() {
   if (!args['--companyId']) {
     log.info(
       `ℹ️  You can pass argument --companyId to validate a specific SF companyId public certificate with the name '<companyId>-public.pem'.`,
@@ -178,10 +181,22 @@ if (args['--generate']) {
     ['x509', '-in', `${cwd()}/${publicFile}`, '-noout', '-enddate'],
     { stdio: 'inherit' },
   )
-} else {
+}
+
+function runServe() {
   log.info(
     `ℹ️  Check the README.md for instructions on how this can be used in combination with Postman`,
   )
   const { serve } = require('./serve')
   serve(args['--port'])
+}
+
+if (args['--generate']) {
+  runGenerate()
+} else if (args['--newkeypair']) {
+  runNewKeypair()
+} else if (args['--validate']) {
+  runValidate()
+} else {
+  runServe()
 }
