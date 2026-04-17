@@ -10,6 +10,27 @@
 
 This utility can generate and validate key pairs, generate SAML assertions accepted by SuccessFactors `/oauth/token` endpoint and integrate with Postman (which lacks support for the OAuth 2.0 SAML bearer assertion flow).
 
+## Table of Contents
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Quick Start](#quick-start)
+- [Generate a new key pair](#generate-a-new-key-pair)
+- [Create or update the OAuth client in SuccessFactors](#create-or-update-the-oauth-client-in-successfactors)
+- [Run a web service returning OAuth access tokens](#run-a-web-service-returning-oauth-access-tokens)
+- [Browser Form](#browser-form)
+- [Usage with Postman](#usage-with-postman)
+- [Generate via CLI](#generate-via-cli)
+- [Argument Aliases](#argument-aliases)
+- [Check the OAuth client certificate's validity](#check-the-oauth-client-certificates-validity)
+- [Learning Only Users](#learning-only-users)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [Sponsorship](#sponsorship)
+
 ## Features
 
 - Generate RSA key pairs for SAML assertion signing
@@ -20,35 +41,6 @@ This utility can generate and validate key pairs, generate SAML assertions accep
 - Reuse company-specific key pairs when available
 - Keep a recent identifier history in the browser form for faster repeated use
 - Integrate with Postman for OAuth 2.0 flows that Postman does not support natively
-
-## Contents
-
-- [OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HCM](#oauth-20-saml-assertion-access-token-generator-for-sap-successfactors-hcm)
-  - [Features](#features)
-  - [Contents](#contents)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [Quick Start](#quick-start)
-    - [Generate a new key pair](#generate-a-new-key-pair)
-    - [Create or update the OAuth client in SuccessFactors](#create-or-update-the-oauth-client-in-successfactors)
-    - [Run a web service returning OAuth access tokens](#run-a-web-service-returning-oauth-access-tokens)
-    - [Browser Form](#browser-form)
-    - [Usage with Postman](#usage-with-postman)
-    - [Generate via CLI](#generate-via-cli)
-      - [Argument Aliases](#argument-aliases)
-    - [Check the OAuth client certificate's validity](#check-the-oauth-client-certificates-validity)
-    - [Learning Only Users](#learning-only-users)
-    - [Testing](#testing)
-    - [Troubleshooting](#troubleshooting)
-      - [The CLI or server cannot find PEM files](#the-cli-or-server-cannot-find-pem-files)
-      - [SuccessFactors rejects the SAML assertion or token request](#successfactors-rejects-the-saml-assertion-or-token-request)
-      - [Postman sends unresolved variables like `{{client_id}}`](#postman-sends-unresolved-variables-like-client_id)
-      - [The wrong user is used for token generation](#the-wrong-user-is-used-for-token-generation)
-      - [Learning-only user requests fail](#learning-only-user-requests-fail)
-      - [Port 3000 is already in use](#port-3000-is-already-in-use)
-  - [Contributing](#contributing)
-  - [Sponsorship](#sponsorship)
 
 ## Prerequisites
 
