@@ -11,6 +11,7 @@ function generate(
   learningOnly,
   iTtl = 600,
   silent = false,
+  useUsername = false,
 ) {
   const publicFile = fs.existsSync(`${companyId}-public.pem`)
     ? `${companyId}-public.pem`
@@ -53,7 +54,7 @@ function generate(
     audiences: 'www.successfactors.com',
     attributes: {
       api_key: sClientId,
-      use_username: 'false',
+      use_username: useUsername ? 'true' : 'false',
       external_user: learningOnly ? 'true' : 'false',
     },
     nameIdentifier: learningOnly ? `${sUser}#DIV#${companyId}` : sUser,

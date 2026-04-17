@@ -19,6 +19,7 @@ try {
     '--newkeypair': Boolean,
     '--clientId': String,
     '--userId': String,
+    '--username': String,
     '--companyId': String,
     '--hostname': String,
     '--validate': Boolean,
@@ -32,6 +33,7 @@ try {
     '-n': '--newkeypair',
     '-c': '--clientId',
     '-u': '--userId',
+    '-U': '--username',
     '-i': '--companyId',
     '-h': '--hostname',
     '-v': '--validate',
@@ -83,8 +85,10 @@ function runGenerate() {
     )
   }
 
-  if (!args['--userId']) {
-    log.error('userId is a required argument, either provide `--userId XXX`')
+  if (!args['--userId'] && !args['--username']) {
+    log.error(
+      'Either userId or username is required, provide `--userId XXX` or `--username XXX`',
+    )
   }
 
   if (!args['--companyId']) {
@@ -92,7 +96,8 @@ function runGenerate() {
   }
 
   const clientId = args['--clientId']
-  const userId = args['--userId']
+  const userId = args['--userId'] || args['--username']
+  const useUsername = !!args['--username']
   const hostname = args['--hostname']
   const companyId = args['--companyId']
 
@@ -104,6 +109,7 @@ function runGenerate() {
     !!args['--learningOnly'],
     args['--ttl'],
     args['--raw'],
+    useUsername,
   )
 
   if (args['--raw']) {

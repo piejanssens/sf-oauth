@@ -7,14 +7,19 @@ const path = require('path')
 
 function parseAuthorizeParams(req) {
   const source = req.body || req.query
+  const userId = source?.user_id
+  const username = source?.username
   return {
-    userId: source?.user_id,
+    userId: userId || username,
+    useUsername: !!username,
     clientId: source?.client_id,
     hostname: source?.scope,
     companyId: source?.state,
     redirectUrl: source?.redirect_uri
       ? decodeURI(source.redirect_uri)
       : undefined,
+    learningOnly:
+      source?.learning_only === 'on' || source?.learning_only === 'true',
   }
 }
 
@@ -23,16 +28,19 @@ function validateAuthorizeParams(userId, clientId, hostname, companyId) {
     return { valid: false, error: 'Missing required parameters' }
   }
 
-  if (
-    clientId.startsWith('{{') ||
-    userId.startsWith('{{') ||
-    hostname.startsWith('{{') ||
-    companyId.startsWith('{{')
-  ) {
-    return {
-      valid: false,
-      error:
-        'Some required parameter is not set. Make sure Postman variables have a value set.',
+  const requiredParams = [
+    { value: clientId, name: 'client_id' },
+    { value: userId, name: 'user_id/username' },
+    { value: hostname, name: 'scope' },
+    { value: companyId, name: 'state' },
+  ]
+
+  for (const param of requiredParams) {
+    if (param.value.startsWith('{{')) {
+      return {
+        valid: false,
+        error: `Some required parameter is not set. Make sure Postman variables have a value set. (${param.name})`,
+      }
     }
   }
 
@@ -53,8 +61,15 @@ const createApp = ({
   )
 
   app.post('/authorize', async (req, res) => {
-    const { userId, clientId, hostname, companyId, redirectUrl } =
-      parseAuthorizeParams(req)
+    const {
+      userId,
+      useUsername,
+      clientId,
+      hostname,
+      companyId,
+      redirectUrl,
+      learningOnly,
+    } = parseAuthorizeParams(req)
     const validation = validateAuthorizeParams(
       userId,
       clientId,
@@ -76,12 +91,21 @@ const createApp = ({
       generateFn,
       fetchFn,
       logFn,
+      useUsername,
+      learningOnly,
     )
   })
 
   app.get('/authorize', async (req, res) => {
-    const { userId, clientId, hostname, companyId, redirectUrl } =
-      parseAuthorizeParams(req)
+    const {
+      userId,
+      useUsername,
+      clientId,
+      hostname,
+      companyId,
+      redirectUrl,
+      learningOnly,
+    } = parseAuthorizeParams(req)
     if (!userId) {
       res.set('Content-Type', 'text/html')
       res.end(authorizeHtml)
@@ -107,6 +131,8 @@ const createApp = ({
         generateFn,
         fetchFn,
         logFn,
+        useUsername,
+        learningOnly,
       )
     }
   })
@@ -153,8 +179,19 @@ async function generateToken(
   generateFn,
   fetchFn,
   logFn,
+  useUsername = false,
+  learningOnly = false,
 ) {
-  const signedAssertionB64 = generateFn(clientId, userId, hostname, companyId)
+  const signedAssertionB64 = generateFn(
+    clientId,
+    userId,
+    hostname,
+    companyId,
+    learningOnly,
+    600,
+    true,
+    useUsername,
+  )
   const params = new URLSearchParams()
   params.append('client_id', clientId)
   params.append('grant_type', 'urn:ietf:params:oauth:grant-type:saml2-bearer')

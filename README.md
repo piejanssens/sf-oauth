@@ -81,16 +81,18 @@ $ sf-oauth [--port]
 🚀 SAML Assertion OAuth access token generator listening on port 3000
 ```
 
-| method | path         | purpose                                                                                                                                       | body/query parameters                    |
-| ------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| GET    | `/authorize` | requests to supply `userId` via your browser, generates SAML assertion, requests OAuth access token from SF and then returns the access token | `client_id`, `scope`, `state`            |
-| POST   | `/authorize` | immediatly generates SAML assertion, requests OAuth access token from SF and then returns the access token                                    | `user_id`, `client_id`, `scope`, `state` |
+| method | path         | purpose                                                                                                                                         | body/query parameters                                                              |
+| ------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| GET    | `/authorize` | requests to supply identifier via your browser, generates SAML assertion, requests OAuth access token from SF and then returns the access token | `client_id`, `scope`, `state`, `learning_only` (optional)                          |
+| POST   | `/authorize` | immediately generates SAML assertion, requests OAuth access token from SF and then returns the access token                                     | `user_id` or `username`, `client_id`, `scope`, `state`, `learning_only` (optional) |
 
 - `user_id`: SuccessFactors _userId_
+- `username`: SuccessFactors _username_ (alternative to user_id)
 - `client_id`: SuccessFactors OAuth client API key
 - `scope`: SuccessFactors hostname
 - `state`: SuccessFactors _companyId_
 - `redirect_uri`: OAuth callback URL (optional)
+- `learning_only`: Set to `true` or `on` to generate assertions for learning-only users (optional)
 
 > ℹ️ The naming of these parameters might seem strange at first, but this is chosen to align with the parameters being sent in the implicit OAuth flow from Postman.
 
@@ -115,7 +117,7 @@ In any collection or folder, set up 'Authorization' to `OAuth 2.0` and configure
 ### Generate via CLI
 
 ```shell
-$ sf-oauth --generate --companyId <SF Company ID> --hostname <SF API hostname> --clientId <OAuth client API key> --userId <userId> [--ttl <assertion validity in seconds>]
+$ sf-oauth --generate --companyId <SF Company ID> --hostname <SF API hostname> --clientId <OAuth client API key> --userId <userId|username> [--ttl <assertion validity in seconds>] [--learningOnly]
 
 SAML Assertion...
 
@@ -151,6 +153,7 @@ Token is valid  🎉
 | -n    | --newkeypair   |
 | -c    | --clientId     |
 | -u    | --userId       |
+| -U    | --username     |
 | -i    | --companyId    |
 | -h    | --hostname     |
 | -v    | --validate     |
@@ -169,7 +172,16 @@ notAfter=Mar  6 13:37:03 2032 GMT
 
 ### Learning Only Users
 
-The SuccessFactors Learning OAuth token server is deprecated. Instead, you can use the SuccessFactors Platform token server to generate OAuth tokens even if the user does not exist in Employee Profile or Employee Central, a so-called learning-only user. For this use-case, use the `-l` or `--learningOnly` argument.
+The SuccessFactors Learning OAuth token server is deprecated. Instead, you can use the SuccessFactors Platform token server to generate OAuth tokens even if the user does not exist in Employee Profile or Employee Central, a so-called learning-only user.
+
+**Via CLI:** Use the `-l` or `--learningOnly` argument.
+
+**Via Web Form:** When using the `/authorize` endpoint, check the "Learning Only User" checkbox.
+
+Example:
+```shell
+$ sf-oauth --generate --companyId salesDemoXYZ --hostname apisalesdemo2.successfactors.eu --clientId <key> --userId <user> --learningOnly
+```
 
 ### Testing
 

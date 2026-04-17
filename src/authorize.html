@@ -1,6 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SuccessFactors OAuth Authorization</title>
     <style>
       body {
         background: #f2f2f2;
@@ -11,17 +14,134 @@
       .pm-main-app-login-success {
         color: #505050;
         line-height: 24px;
-        text-align: center;
-        margin-top: 100px;
+        margin-top: 50px;
+        display: flex;
+        gap: 60px;
+        justify-content: center;
+        align-items: flex-start;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 20px;
+        padding-bottom: 100px;
       }
 
-      .pm-main-app-login-success > h1 {
+      .pm-main-app-login-success-left {
+        text-align: center;
+        flex: 0 0 auto;
+      }
+
+      .pm-main-app-login-success-right {
+        flex: 0 0 250px;
+        margin-top: 80px;
+      }
+
+      .pm-main-app-login-success-left > h1 {
         font-size: 16px;
       }
 
-      .pm-main-app-login-success > p {
+      .pm-main-app-login-success-left form {
+        margin-top: 20px;
+      }
+
+      .pm-main-app-login-success-left div {
+        margin-bottom: 12px;
+      }
+
+      .pm-main-app-login-success-left label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: bold;
+        font-size: 12px;
+      }
+
+      .pm-main-app-login-success-left input[type='text'] {
+        width: 200px;
+        padding: 6px;
         font-size: 14px;
-        margin: 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .pm-main-app-login-success-left .radio-group {
+        margin-bottom: 12px;
+      }
+
+      .pm-main-app-login-success-left .radio-option {
+        display: inline-block;
+        margin-right: 20px;
+      }
+
+      .pm-main-app-login-success-left input[type='radio'] {
+        margin-right: 6px;
+        cursor: pointer;
+      }
+
+      .pm-main-app-login-success-left .radio-option label {
+        display: inline;
+        font-weight: normal;
+        margin-bottom: 0;
+      }
+
+      .pm-main-app-login-success-left input[type='submit'] {
+        background-color: #ff4f19;
+        color: white;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+
+      .pm-main-app-login-success-left input[type='submit']:hover {
+        background-color: #e64514;
+      }
+
+      .pm-main-app-login-success-left input[type='checkbox'] {
+        margin-right: 6px;
+        cursor: pointer;
+      }
+
+      .pm-main-app-login-success-right .recent-identifiers {
+        padding: 12px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        max-height: 400px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .pm-main-app-login-success-right .recent-identifiers-title {
+        font-size: 11px;
+        font-weight: bold;
+        color: #999;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+      }
+
+      .pm-main-app-login-success-right .recent-identifier-item {
+        display: block;
+        background: #f0f0f0;
+        padding: 8px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        transition: all 0.2s;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .pm-main-app-login-success-right .recent-identifier-item:hover {
+        background: #ff4f19;
+        color: white;
+        border-color: #ff4f19;
       }
 
       footer {
@@ -47,91 +167,73 @@
   </head>
   <body>
     <div class="pm-main-app-login-success">
-      <svg
-        height="100"
-        width="100"
-        version="1.1"
-        viewBox="0 0 512 512"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        xml:space="preserve"
-      >
-        <g>
-          <g>
-            <path
-              style="fill: #ff4f19"
-              d="M400.764,402.012l-18.14-108.591h-0.053c-2.519-14.684-12.614-29.89-29.801-34.702
-            c-0.212-0.06-0.424-0.106-0.642-0.137l-42.323-6.351c-0.259-0.039-0.812-0.06-1.077-0.06c-2.677,0-4.935,1.996-5.261,4.655
-            c-2.253,18.298-17.382,32.665-36.85,36.595h-21.241c-19.47-3.93-34.599-18.295-36.847-36.595
-            c-0.332-2.736-2.796-4.794-5.396-4.652c-0.311-0.018-0.616,0.008-0.942,0.057l-42.323,6.351c-0.217,0.031-0.43,0.078-0.642,0.137
-            c-17.188,4.812-27.283,20.019-29.801,34.702h-0.053l-18.14,108.591C107.479,421.731,122.597,440,142.67,440H144h224h1.33
-            C389.403,440,404.52,421.731,400.764,402.012z"
+      <div class="pm-main-app-login-success-left">
+        <form
+          method="post"
+          action="/authorize"
+          autocomplete="on"
+          onsubmit="return handleFormSubmit(event)"
+        >
+          <div>
+            <label for="identifier">SuccessFactors Identifier</label>
+            <input
+              type="text"
+              id="identifier"
+              placeholder="Enter User ID or Username"
+              list="recent-identifiers-list"
             />
-          </g>
-          <g>
-            <path
-              style="fill: #fdc88e"
-              d="M256,246.87c-18.52,0-35.322-7.947-47.719-20.791c-0.009,7.698-0.289,18.808-2.33,26.915
-            c1.339,0.818,2.378,2.162,2.58,3.833c2.646,21.529,23.051,37.761,47.469,37.761c24.413,0,44.818-16.235,47.469-37.761
-            c0.206-1.674,1.222-3.015,2.581-3.831c-2.041-8.107-2.322-19.219-2.331-26.917C291.322,238.923,274.519,246.87,256,246.87z"
-            />
-          </g>
-          <g>
-            <path
-              style="fill: #ffb980"
-              d="M302.684,227.056C290.39,239.301,274.025,246.87,256,246.87c-18.52,0-35.322-7.947-47.719-20.791
-            c-0.009,7.698-0.289,18.808-2.33,26.915c1.339,0.818,2.378,2.162,2.58,3.833c1.17,9.516,5.817,17.989,12.74,24.491
-            C253.194,276.822,289.426,245.3,302.684,227.056z"
-            />
-          </g>
-          <g>
-            <path
-              style="fill: #ffe1b2"
-              d="M303.717,114.321h-90.133c-14.617,0-26.51,11.893-26.51,26.51v31.812
-            c0,40.929,30.921,74.227,68.925,74.227s68.925-33.298,68.925-74.227v-37.114C324.925,123.835,315.414,114.321,303.717,114.321z"
-            />
-          </g>
-          <g>
-            <path
-              style="fill: #7e5449"
-              d="M293.113,56h-68.925c-9.972,0-18.355,6.917-20.612,16.204
-            c-18.251,2.32-32.407,17.946-32.407,36.816v26.51c0,13.664,5.801,26.411,15.906,35.47v-30.168c0-14.617,11.893-26.51,26.51-26.51
-            h90.133c11.696,0,21.208,9.514,21.208,21.208v35.464c10.107-9.057,15.906-21.804,15.906-35.464v-31.812
-            C340.831,77.407,319.426,56,293.113,56z"
-            />
-          </g>
-          <g>
-            <path
-              style="fill: #d8dce1"
-              d="M352,440H160c-4.418,0-8-3.582-8-8V328c0-4.418,3.582-8,8-8h192c4.418,0,8,3.582,8,8v104
-            C360,436.418,356.418,440,352,440z"
-            />
-          </g>
-          <g>
-            <g>
-              <path
-                style="fill: #9f6459"
-                d="M504,456H8c-4.422,0-8-3.582-8-8s3.578-8,8-8h496c4.422,0,8,3.582,8,8S508.422,456,504,456z"
+            <datalist id="recent-identifiers-list"></datalist>
+          </div>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input
+                type="radio"
+                id="user_id_radio"
+                name="id_type"
+                value="user_id"
+                checked
               />
-            </g>
-          </g>
-          <g>
-            <circle style="fill: #ffffff" cx="256" cy="384" r="16" />
-          </g>
-        </g>
-      </svg>
-      <h1>SuccessFactors userId:</h1>
-      <form method="post" action="/authorize" autocomplete="on">
-        <input type="text" name="user_id" required />
-        <input id="client_id" type="hidden" name="client_id" />
-        <input id="state" type="hidden" name="state" />
-        <input id="scope" type="hidden" name="scope" />
-        <input id="redirect_uri" type="hidden" name="redirect_uri" />
-        <input type="submit" value="Continue" />
-      </form>
+              <label for="user_id_radio">User ID</label>
+            </div>
+            <div class="radio-option">
+              <input
+                type="radio"
+                id="username_radio"
+                name="id_type"
+                value="username"
+              />
+              <label for="username_radio">Username</label>
+            </div>
+          </div>
+          <div>
+            <input type="checkbox" id="learning_only" name="learning_only" />
+            <label
+              for="learning_only"
+              style="display: inline; font-weight: normal; margin-bottom: 0"
+            >
+              Learning Only User
+            </label>
+          </div>
+          <input id="user_id" type="hidden" name="user_id" />
+          <input id="username" type="hidden" name="username" />
+          <input id="client_id" type="hidden" name="client_id" />
+          <input id="state" type="hidden" name="state" />
+          <input id="scope" type="hidden" name="scope" />
+          <input id="redirect_uri" type="hidden" name="redirect_uri" />
+          <input type="submit" value="Continue" />
+        </form>
+      </div>
+      <div class="pm-main-app-login-success-right">
+        <div id="recent-identifiers-container" style="display: none">
+          <div class="recent-identifiers-title">Pick a Recent Identifier</div>
+          <div id="recent-identifiers" class="recent-identifiers"></div>
+        </div>
+      </div>
     </div>
     <script>
+      const STORAGE_KEY = 'sf_oauth_recent_identifiers'
+      const MAX_RECENT = 20
+
       const queryString = window.location.search
       const urlParams = new URLSearchParams(queryString)
       document.getElementById('client_id').value = urlParams.get('client_id')
@@ -139,6 +241,94 @@
       document.getElementById('scope').value = urlParams.get('scope')
       document.getElementById('redirect_uri').value =
         urlParams.get('redirect_uri')
+
+      // Load and display recent identifiers
+      function loadRecentIdentifiers() {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        const recent = stored ? JSON.parse(stored) : []
+
+        // Update datalist for autocomplete
+        const datalist = document.getElementById('recent-identifiers-list')
+        datalist.innerHTML = ''
+        recent.forEach((identifier) => {
+          const option = document.createElement('option')
+          option.value = identifier
+          datalist.appendChild(option)
+        })
+
+        // Update recent identifiers display
+        const container = document.getElementById(
+          'recent-identifiers-container',
+        )
+        const display = document.getElementById('recent-identifiers')
+
+        if (recent.length > 0) {
+          container.style.display = 'block'
+          display.innerHTML = ''
+          recent.forEach((identifier) => {
+            const item = document.createElement('div')
+            item.className = 'recent-identifier-item'
+            item.textContent = identifier
+            item.onclick = () => {
+              document.getElementById('identifier').value = identifier
+              document.getElementById('identifier').focus()
+            }
+            display.appendChild(item)
+          })
+        } else {
+          container.style.display = 'none'
+        }
+      }
+
+      // Save identifier to recent list
+      function saveRecentIdentifier(identifier) {
+        if (!identifier || identifier.trim() === '') return
+
+        const stored = localStorage.getItem(STORAGE_KEY)
+        let recent = stored ? JSON.parse(stored) : []
+
+        // Remove duplicate if exists
+        recent = recent.filter((item) => item !== identifier)
+
+        // Add to beginning
+        recent.unshift(identifier)
+
+        // Keep only MAX_RECENT items
+        recent = recent.slice(0, MAX_RECENT)
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(recent))
+        loadRecentIdentifiers()
+      }
+
+      function handleFormSubmit(event) {
+        const identifier = document.getElementById('identifier').value.trim()
+        const idType = document.querySelector(
+          'input[name="id_type"]:checked',
+        ).value
+
+        if (!identifier) {
+          alert('Please provide an identifier')
+          event.preventDefault()
+          return false
+        }
+
+        // Save to recent identifiers before submitting
+        saveRecentIdentifier(identifier)
+
+        // Set the appropriate hidden field based on the selected type
+        if (idType === 'user_id') {
+          document.getElementById('user_id').value = identifier
+          document.getElementById('username').value = ''
+        } else {
+          document.getElementById('username').value = identifier
+          document.getElementById('user_id').value = ''
+        }
+
+        return true
+      }
+
+      // Load recent identifiers on page load
+      window.addEventListener('DOMContentLoaded', loadRecentIdentifiers)
     </script>
     <footer>
       <p>
