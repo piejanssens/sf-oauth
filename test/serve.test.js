@@ -82,10 +82,7 @@ test('POST /authorize returns 400 when Postman variables are not resolved', asyn
     })
 
     assert.equal(response.status, 400)
-    assert.match(
-      await response.text(),
-      /Some required parameter is not set/,
-    )
+    assert.match(await response.text(), /Some required parameter is not set/)
   } finally {
     server.close()
   }
@@ -159,7 +156,10 @@ test('GET /authorize redirects when redirect_uri is provided', async () => {
     assert.equal(response.status, 302)
     const location = response.headers.get('location')
     assert.ok(location)
-    assert.match(location, /https:\/\/postman\.example\/callback\?access_token=abc123/)
+    assert.match(
+      location,
+      /https:\/\/postman\.example\/callback\?access_token=abc123/,
+    )
   } finally {
     server.close()
   }

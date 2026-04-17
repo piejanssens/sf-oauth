@@ -167,11 +167,25 @@ const createApp = ({
 const serve = (port = 3000, deps = {}) => {
   const app = createApp(deps)
 
-  return app.listen(port, () => {
+  const server = app.listen(port, () => {
     ;(deps.logFn || log).info(
       `🚀 SAML Assertion OAuth access token generator listening on http://localhost:${port}`,
     )
   })
+
+  server.on('error', (error) => {
+    const logger = deps.logFn || log
+    if (error && error.code === 'EADDRINUSE') {
+      logger.error(
+        `Port ${port} is already in use. Start with a different port using --port <number>.`,
+      )
+      return
+    }
+
+    logger.error(error.message)
+  })
+
+  return server
 }
 
 async function generateToken(

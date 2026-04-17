@@ -40,7 +40,7 @@ try {
     '-p': '--port',
     '-r': '--raw',
     '-d': '--dir',
-    '-l': '--learningOnly'
+    '-l': '--learningOnly',
   })
 } catch (err) {
   switch (err.code) {
@@ -49,7 +49,7 @@ try {
       break
     case 'ARG_MISSING_REQUIRED_LONGARG':
       log.error(
-        'One or more arguments is used incorrectly, are you forgetting to provide value perhaps?'
+        'One or more arguments is used incorrectly, are you forgetting to provide value perhaps?',
       )
       break
     default:
@@ -74,13 +74,13 @@ if (!args['--raw']) {
 if (args['--generate']) {
   if (!args['--hostname']) {
     log.error(
-      'SF API hostname is a required argument, provide `--hostname XXX`'
+      'SF API hostname is a required argument, provide `--hostname XXX`',
     )
   }
 
   if (!args['--clientId']) {
     log.error(
-      'OAuth client API key is a required argument, provide `--clientId XXX`'
+      'OAuth client API key is a required argument, provide `--clientId XXX`',
     )
   }
 
@@ -104,7 +104,7 @@ if (args['--generate']) {
     companyId,
     !!args['--learningOnly'],
     args['--ttl'],
-    args['--raw']
+    args['--raw'],
   )
 
   if (args['--raw']) {
@@ -120,7 +120,7 @@ if (args['--generate']) {
 } else if (args['--newkeypair']) {
   if (!args['--companyId']) {
     log.info(
-      'ℹ️  You can pass argument --companyId for convenience store the key pair as <companyId>-private.pem and <companyId>-public.pem'
+      'ℹ️  You can pass argument --companyId for convenience store the key pair as <companyId>-private.pem and <companyId>-public.pem',
     )
   }
 
@@ -133,14 +133,14 @@ if (args['--generate']) {
 
   if (fs.existsSync(publicFile) || fs.existsSync(privateFile)) {
     log.error(
-      `File ${publicFile} and/or ${privateFile} arleady exists in ${cwd()}`
+      `File ${publicFile} and/or ${privateFile} arleady exists in ${cwd()}`,
     )
   }
 
   child_process.spawnSync(
     'openssl',
     ['genrsa', '-out', `${cwd()}/${privateFile}`, 2048],
-    { stdio: 'inherit' }
+    { stdio: 'inherit' },
   )
 
   child_process.spawnSync(
@@ -156,12 +156,12 @@ if (args['--generate']) {
       '-days',
       360,
     ],
-    { stdio: 'inherit' }
+    { stdio: 'inherit' },
   )
 } else if (args['--validate']) {
   if (!args['--companyId']) {
     log.info(
-      `ℹ️  You can pass argument --companyId to validate a specific SF companyId public certificate with the name '<companyId>-public.pem'.`
+      `ℹ️  You can pass argument --companyId to validate a specific SF companyId public certificate with the name '<companyId>-public.pem'.`,
     )
   }
 
@@ -176,11 +176,11 @@ if (args['--generate']) {
   child_process.spawnSync(
     'openssl',
     ['x509', '-in', `${cwd()}/${publicFile}`, '-noout', '-enddate'],
-    { stdio: 'inherit' }
+    { stdio: 'inherit' },
   )
 } else {
   log.info(
-    `ℹ️  Check the README.md for instructions on how this can be used in combination with Postman`
+    `ℹ️  Check the README.md for instructions on how this can be used in combination with Postman`,
   )
   const { serve } = require('./serve')
   serve(args['--port'])
