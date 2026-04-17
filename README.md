@@ -10,28 +10,50 @@
 
 This utility can generate and validate key pairs, generate SAML assertions accepted by SuccessFactors `/oauth/token` endpoint and integrate with Postman (which lacks support for the OAuth 2.0 SAML bearer assertion flow).
 
-Features:
+## Features
+
+- Generate RSA key pairs for SAML assertion signing
+- Generate SAML bearer assertions accepted by the SuccessFactors OAuth token endpoint
+- Run a local web service to request access tokens interactively from the browser
+- Identify users by either `userId` or `username`
+- Support learning-only users
+- Reuse company-specific key pairs when available
+- Keep a recent identifier history in the browser form for faster repeated use
+- Integrate with Postman for OAuth 2.0 flows that Postman does not support natively
+
+## Contents
 
 - [OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HCM](#oauth-20-saml-assertion-access-token-generator-for-sap-successfactors-hcm)
+  - [Features](#features)
+  - [Contents](#contents)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Usage](#usage)
+    - [Quick Start](#quick-start)
     - [Generate a new key pair](#generate-a-new-key-pair)
     - [Create or update the OAuth client in SuccessFactors](#create-or-update-the-oauth-client-in-successfactors)
     - [Run a web service returning OAuth access tokens](#run-a-web-service-returning-oauth-access-tokens)
+    - [Browser Form](#browser-form)
     - [Usage with Postman](#usage-with-postman)
     - [Generate via CLI](#generate-via-cli)
       - [Argument Aliases](#argument-aliases)
     - [Check the OAuth client certificate's validity](#check-the-oauth-client-certificates-validity)
     - [Learning Only Users](#learning-only-users)
     - [Testing](#testing)
+    - [Troubleshooting](#troubleshooting)
+      - [The CLI or server cannot find PEM files](#the-cli-or-server-cannot-find-pem-files)
+      - [SuccessFactors rejects the SAML assertion or token request](#successfactors-rejects-the-saml-assertion-or-token-request)
+      - [Postman sends unresolved variables like `{{client_id}}`](#postman-sends-unresolved-variables-like-client_id)
+      - [The wrong user is used for token generation](#the-wrong-user-is-used-for-token-generation)
+      - [Learning-only user requests fail](#learning-only-user-requests-fail)
+      - [Port 3000 is already in use](#port-3000-is-already-in-use)
   - [Contributing](#contributing)
   - [Sponsorship](#sponsorship)
 
 ## Prerequisites
 
-- Install Node.JS >= 18
-- Install OpenSSL
+- NodeJS >= 18
+- OpenSSL
 
 ## Installation
 
@@ -42,6 +64,13 @@ $ npm i -g sf-oauth
 ## Usage
 
 > ⚠️ Once installed, you can run the command `sf-oauth` from a terminal shell. Either pass the `--dir` argument to specify the directory (to be) containing the PEM files, or run from within that directory.
+
+### Quick Start
+
+1. Generate a key pair with `sf-oauth --newkeypair`
+2. Upload the generated public certificate to the SuccessFactors OAuth client configuration
+3. Start the local helper with `sf-oauth --dir <pem-directory>`
+4. Open the `/authorize` endpoint from your browser or call it directly from Postman
 
 ### Generate a new key pair
 
@@ -86,17 +115,20 @@ $ sf-oauth [--port]
 | GET    | `/authorize` | requests to supply identifier via your browser, generates SAML assertion, requests OAuth access token from SF and then returns the access token | `client_id`, `scope`, `state`, `learning_only` (optional)                          |
 | POST   | `/authorize` | immediately generates SAML assertion, requests OAuth access token from SF and then returns the access token                                     | `user_id` or `username`, `client_id`, `scope`, `state`, `learning_only` (optional) |
 
-- `user_id`: SuccessFactors _userId_
-- `username`: SuccessFactors _username_ (alternative to user_id)
-- `client_id`: SuccessFactors OAuth client API key
-- `scope`: SuccessFactors hostname
-- `state`: SuccessFactors _companyId_
-- `redirect_uri`: OAuth callback URL (optional)
-- `learning_only`: Set to `true` or `on` to generate assertions for learning-only users (optional)
-
-> ℹ️ The naming of these parameters might seem strange at first, but this is chosen to align with the parameters being sent in the implicit OAuth flow from Postman.
-
 > ⚠️ If a specific keypair with the name '<companyId>-public.pem' and '<companyId>-private.pem' is present, this will be used to generate the SAML assertion. If not, by default it will use 'public.pem' and 'private.pem'.
+
+### Browser Form
+
+When you open `GET /authorize` without a `user_id`, the app renders a browser form that helps you complete the token request.
+
+The form supports:
+
+- Choosing between `User ID` and `Username`
+- Entering the identifier manually or selecting one from recent history
+- Marking the request as `Learning Only User`
+- Reusing up to 20 recent identifiers stored in the browser's local storage
+
+The recent identifiers are shown in a list on the right side of the page and can be clicked to populate the identifier input.
 
 ### Usage with Postman
 
@@ -117,7 +149,7 @@ In any collection or folder, set up 'Authorization' to `OAuth 2.0` and configure
 ### Generate via CLI
 
 ```shell
-$ sf-oauth --generate --companyId <SF Company ID> --hostname <SF API hostname> --clientId <OAuth client API key> --userId <userId|username> [--ttl <assertion validity in seconds>] [--learningOnly]
+$ sf-oauth --generate --companyId <SF Company ID> --hostname <SF API hostname> --clientId <OAuth client API key> (--userId <userId> | --username <username>) [--ttl <assertion validity in seconds>] [--learningOnly]
 
 SAML Assertion...
 
@@ -126,9 +158,15 @@ base64 encoded SAML Assertion
 
 Optional parameters:
 
+- `--dir`: directory containing the PEM files. If omitted, the current working directory is used.
 - `--ttl`: validity of the assertion in seconds (600 by default)
 - `--validate`: will request a bearer access token and validate it on by calling the SF OData API, this requires the argument `--companyId` to be provided as well.
 - `--raw`: will output the base64 encoded string only. This can be used in scripting or piping. For example 🪄 `$ sf-oauth --generate --companyId ... --raw | base64 -d`
+
+For user identification, provide exactly one of these:
+
+- `--userId`: use the SuccessFactors user ID
+- `--username`: use the SuccessFactors username
 
 Example of generating a SAML assertion, requisting an access token with it and finally testing the access token by calling the SuccessFactors OData API:
 
@@ -194,6 +232,66 @@ npm test
 The test suite uses dummy key pairs stored in `test/fixtures/*.pem` for assertion generation tests.
 
 GitHub Actions runs the same test command on every pull request and on pushes to `master`.
+
+### Troubleshooting
+
+#### The CLI or server cannot find PEM files
+
+Make sure you either run `sf-oauth` from the directory containing the PEM files or pass `--dir <pem-directory>` explicitly.
+
+Expected files are:
+
+- `public.pem` and `private.pem`, or
+- `<companyId>-public.pem` and `<companyId>-private.pem`
+
+#### SuccessFactors rejects the SAML assertion or token request
+
+Check these items first:
+
+- The OAuth client in SuccessFactors contains the correct public certificate
+- The `client_id` matches the OAuth client API key from SuccessFactors
+- The hostname points to the correct SuccessFactors API domain
+- The certificate is still valid and not expired
+
+You can inspect certificate validity with:
+
+```shell
+sf-oauth --validate [--companyId <SF Company ID>]
+```
+
+#### Postman sends unresolved variables like `{{client_id}}`
+
+This usually means the wrong Postman environment is selected or one of the required variables is missing.
+
+Verify that your active environment defines:
+
+- `hostname`
+- `company_id`
+- `client_id`
+
+#### The wrong user is used for token generation
+
+Choose exactly one identifier type:
+
+- `--userId` for a SuccessFactors user ID
+- `--username` for a SuccessFactors username
+
+In the browser form, select the matching radio option before submitting.
+
+#### Learning-only user requests fail
+
+If the user does not exist in Employee Profile or Employee Central, enable learning-only mode:
+
+- In the CLI, add `--learningOnly`
+- In the browser form, check `Learning Only User`
+
+#### Port 3000 is already in use
+
+Start the local server on a different port:
+
+```shell
+sf-oauth --port 3001
+```
 
 ## Contributing
 
