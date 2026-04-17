@@ -1,4 +1,4 @@
-# OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HXM Suite
+# OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HCM Suite
 
 [![Latest Release](https://img.shields.io/github/v/release/piejanssens/sf-oauth?label=latest%20release)](https://github.com/piejanssens/sf-oauth/releases/latest)
 [![Test Status](https://github.com/piejanssens/sf-oauth/actions/workflows/test.yml/badge.svg)](https://github.com/piejanssens/sf-oauth/actions/workflows/test.yml)
@@ -12,7 +12,7 @@ This utility can generate and validate key pairs, generate SAML assertions accep
 
 Features:
 
-- [OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HXM Suite](#oauth-20-saml-assertion-access-token-generator-for-sap-successfactors-hxm-suite)
+- [OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HCM Suite](#oauth-20-saml-assertion-access-token-generator-for-sap-successfactors-hcm-suite)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Usage](#usage)
