@@ -27,7 +27,7 @@ test('GET /authorize returns HTML form when user_id is missing', async () => {
 
     assert.equal(response.status, 200)
     assert.match(response.headers.get('content-type') || '', /text\/html/)
-    assert.match(html, /SuccessFactors Identification:/)
+    assert.match(html, /SuccessFactors Identifier/)
   } finally {
     server.close()
   }
