@@ -182,6 +182,6 @@ if (args['--generate']) {
   log.info(
     `ℹ️  Check the README.md for instructions on how this can be used in combination with Postman`
   )
-  const serve = require('./serve')
+  const { serve } = require('./serve')
   serve(args['--port'])
 }

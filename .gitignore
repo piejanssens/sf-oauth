@@ -1,5 +1,6 @@
 node_modules/
 *.pem
+!test/fixtures/*.pem
 *.cert
 *.key
 *.der

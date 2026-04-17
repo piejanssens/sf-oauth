@@ -3,7 +3,11 @@ const { generate } = require('./gen')
 var bodyParser = require('body-parser')
 const log = require('./logger')
 
-const serve = (port = 3000) => {
+const createApp = ({
+  generateFn = generate,
+  fetchFn = fetch,
+  logFn = log,
+} = {}) => {
   const app = express()
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
@@ -13,8 +17,21 @@ const serve = (port = 3000) => {
     const clientId = req.body?.client_id
     const hostname = req.body?.scope
     const companyId = req.body?.state
-    const redirectUrl = decodeURI(req.body?.redirect_uri)
-    generateToken(req, res, clientId, userId, hostname, companyId, redirectUrl)
+    const redirectUrl = req.body?.redirect_uri
+      ? decodeURI(req.body.redirect_uri)
+      : undefined
+    generateToken(
+      req,
+      res,
+      clientId,
+      userId,
+      hostname,
+      companyId,
+      redirectUrl,
+      generateFn,
+      fetchFn,
+      logFn,
+    )
   })
 
   app.get('/authorize', async (req, res) => {
@@ -122,7 +139,9 @@ const serve = (port = 3000) => {
       const clientId = req.query?.client_id
       const hostname = req.query?.scope
       const companyId = req.query?.state
-      const redirectUrl = decodeURI(req.query?.redirect_uri)
+      const redirectUrl = req.query?.redirect_uri
+        ? decodeURI(req.query.redirect_uri)
+        : undefined
       generateToken(
         req,
         res,
@@ -131,6 +150,9 @@ const serve = (port = 3000) => {
         hostname,
         companyId,
         redirectUrl,
+        generateFn,
+        fetchFn,
+        logFn,
       )
     }
   })
@@ -139,8 +161,14 @@ const serve = (port = 3000) => {
     res.redirect('https://npmjs.com/sf-oauth')
   })
 
-  app.listen(port, () => {
-    log.info(
+  return app
+}
+
+const serve = (port = 3000, deps = {}) => {
+  const app = createApp(deps)
+
+  return app.listen(port, () => {
+    ;(deps.logFn || log).info(
       `🚀 SAML Assertion OAuth access token generator listening on http://localhost:${port}`,
     )
   })
@@ -154,6 +182,9 @@ async function generateToken(
   hostname,
   companyId,
   redirectUrl,
+  generateFn,
+  fetchFn,
+  logFn,
 ) {
   if (!clientId || !userId || !hostname || !companyId) {
     res.status(400).send('Missing required parameters')
@@ -174,7 +205,7 @@ async function generateToken(
     return
   }
 
-  let signedAssertionB64 = generate(clientId, userId, hostname, companyId)
+  let signedAssertionB64 = generateFn(clientId, userId, hostname, companyId)
   let params = new URLSearchParams()
   params.append('client_id', clientId)
   params.append('grant_type', 'urn:ietf:params:oauth:grant-type:saml2-bearer')
@@ -182,7 +213,7 @@ async function generateToken(
   params.append('assertion', signedAssertionB64)
 
   try {
-    const response = await fetch(`https://${hostname}/oauth/token`, {
+    const response = await fetchFn(`https://${hostname}/oauth/token`, {
       method: 'POST',
       body: params,
     })
@@ -203,9 +234,11 @@ async function generateToken(
       }
     }
   } catch (error) {
-    log.error(error)
+    logFn.error(error)
     res.status(500).send(error.message)
   }
 }
 
 module.exports = serve
+module.exports.serve = serve
+module.exports.createApp = createApp

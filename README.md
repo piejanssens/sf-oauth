@@ -1,5 +1,13 @@
 # OAuth 2.0 SAML Assertion Access Token Generator for SAP SuccessFactors HXM Suite
 
+[![Latest Release](https://img.shields.io/github/v/release/piejanssens/sf-oauth?label=latest%20release)](https://github.com/piejanssens/sf-oauth/releases/latest)
+[![Test Status](https://github.com/piejanssens/sf-oauth/actions/workflows/test.yml/badge.svg)](https://github.com/piejanssens/sf-oauth/actions/workflows/test.yml)
+[![npm](https://img.shields.io/npm/v/sf-oauth?label=npm)](https://www.npmjs.com/package/sf-oauth)
+[![npm downloads](https://img.shields.io/npm/dm/sf-oauth?label=downloads)](https://www.npmjs.com/package/sf-oauth)
+[![License](https://img.shields.io/github/license/piejanssens/sf-oauth)](LICENSE)
+[![Node Version](https://img.shields.io/node/v/sf-oauth)](https://www.npmjs.com/package/sf-oauth)
+[![semantic-release](https://img.shields.io/badge/semantic--release-enabled-brightgreen)](https://github.com/semantic-release/semantic-release)
+
 This utility can generate and validate key pairs, generate SAML assertions accepted by SuccessFactors `/oauth/token` endpoint and integrate with Postman (which lacks support for the OAuth 2.0 SAML bearer assertion flow).
 
 Features:
@@ -16,6 +24,7 @@ Features:
       - [Argument Aliases](#argument-aliases)
     - [Check the OAuth client certificate's validity](#check-the-oauth-client-certificates-validity)
     - [Learning Only Users](#learning-only-users)
+    - [Testing](#testing)
   - [Contributing](#contributing)
   - [Sponsorship](#sponsorship)
 
@@ -161,6 +170,18 @@ notAfter=Mar  6 13:37:03 2032 GMT
 ### Learning Only Users
 
 The SuccessFactors Learning OAuth token server is deprecated. Instead, you can use the SuccessFactors Platform token server to generate OAuth tokens even if the user does not exist in Employee Profile or Employee Central, a so-called learning-only user. For this use-case, use the `-l` or `--learningOnly` argument.
+
+### Testing
+
+Run the automated tests locally with:
+
+```shell
+npm test
+```
+
+The test suite uses dummy key pairs stored in `test/fixtures/*.pem` for assertion generation tests.
+
+GitHub Actions runs the same test command on every pull request and on pushes to `master`.
 
 ## Contributing
 
