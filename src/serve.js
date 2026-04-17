@@ -31,7 +31,8 @@ function validateAuthorizeParams(userId, clientId, hostname, companyId) {
   ) {
     return {
       valid: false,
-      error: 'Some required parameter is not set. Make sure Postman variables have a value set.',
+      error:
+        'Some required parameter is not set. Make sure Postman variables have a value set.',
     }
   }
 
@@ -48,13 +49,18 @@ const createApp = ({
   app.use(bodyParser.urlencoded({ extended: true }))
   const authorizeHtml = fs.readFileSync(
     path.join(__dirname, 'authorize.html'),
-    'utf8'
+    'utf8',
   )
 
   app.post('/authorize', async (req, res) => {
     const { userId, clientId, hostname, companyId, redirectUrl } =
       parseAuthorizeParams(req)
-    const validation = validateAuthorizeParams(userId, clientId, hostname, companyId)
+    const validation = validateAuthorizeParams(
+      userId,
+      clientId,
+      hostname,
+      companyId,
+    )
     if (!validation.valid) {
       res.status(400).send(validation.error)
       return
@@ -80,7 +86,12 @@ const createApp = ({
       res.set('Content-Type', 'text/html')
       res.end(authorizeHtml)
     } else {
-      const validation = validateAuthorizeParams(userId, clientId, hostname, companyId)
+      const validation = validateAuthorizeParams(
+        userId,
+        clientId,
+        hostname,
+        companyId,
+      )
       if (!validation.valid) {
         res.status(400).send(validation.error)
         return
