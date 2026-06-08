@@ -124,7 +124,10 @@
       }
 
       .pm-main-app-login-success-right .recent-identifier-item {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
         background: #f0f0f0;
         padding: 8px 10px;
         border-radius: 3px;
@@ -136,6 +139,34 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+
+      .pm-main-app-login-success-right .recent-identifier-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .pm-main-app-login-success-right .recent-identifier-remove {
+        border: none;
+        background: transparent;
+        color: inherit;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 1;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        cursor: pointer;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .pm-main-app-login-success-right .recent-identifier-remove:hover {
+        background: rgba(255, 255, 255, 0.3);
       }
 
       .pm-main-app-login-success-right .recent-identifier-item:hover {
@@ -242,10 +273,22 @@
       document.getElementById('redirect_uri').value =
         urlParams.get('redirect_uri')
 
+      function getRecentIdentifiers() {
+        const sessionStored = sessionStorage.getItem(STORAGE_KEY)
+        const localStored = localStorage.getItem(STORAGE_KEY)
+        const stored = sessionStored || localStored
+        return stored ? JSON.parse(stored) : []
+      }
+
+      function setRecentIdentifiers(recent) {
+        const serialized = JSON.stringify(recent)
+        sessionStorage.setItem(STORAGE_KEY, serialized)
+        localStorage.setItem(STORAGE_KEY, serialized)
+      }
+
       // Load and display recent identifiers
       function loadRecentIdentifiers() {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        const recent = stored ? JSON.parse(stored) : []
+        const recent = getRecentIdentifiers()
 
         // Update datalist for autocomplete
         const datalist = document.getElementById('recent-identifiers-list')
@@ -268,7 +311,24 @@
           recent.forEach((identifier) => {
             const item = document.createElement('div')
             item.className = 'recent-identifier-item'
-            item.textContent = identifier
+
+            const label = document.createElement('span')
+            label.className = 'recent-identifier-label'
+            label.textContent = identifier
+
+            const removeButton = document.createElement('button')
+            removeButton.className = 'recent-identifier-remove'
+            removeButton.type = 'button'
+            removeButton.title = `Remove ${identifier}`
+            removeButton.setAttribute('aria-label', `Remove ${identifier}`)
+            removeButton.textContent = 'x'
+            removeButton.onclick = (event) => {
+              event.stopPropagation()
+              removeRecentIdentifier(identifier)
+            }
+
+            item.appendChild(label)
+            item.appendChild(removeButton)
             item.onclick = () => {
               document.getElementById('identifier').value = identifier
               document.getElementById('identifier').focus()
@@ -280,12 +340,19 @@
         }
       }
 
+      function removeRecentIdentifier(identifier) {
+        const recent = getRecentIdentifiers()
+        const filtered = recent.filter((item) => item !== identifier)
+
+        setRecentIdentifiers(filtered)
+        loadRecentIdentifiers()
+      }
+
       // Save identifier to recent list
       function saveRecentIdentifier(identifier) {
         if (!identifier || identifier.trim() === '') return
 
-        const stored = localStorage.getItem(STORAGE_KEY)
-        let recent = stored ? JSON.parse(stored) : []
+        let recent = getRecentIdentifiers()
 
         // Remove duplicate if exists
         recent = recent.filter((item) => item !== identifier)
@@ -296,7 +363,7 @@
         // Keep only MAX_RECENT items
         recent = recent.slice(0, MAX_RECENT)
 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(recent))
+        setRecentIdentifiers(recent)
         loadRecentIdentifiers()
       }
 
